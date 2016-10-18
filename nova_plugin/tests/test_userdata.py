@@ -13,9 +13,9 @@
 #  * See the License for the specific language governing permissions and
 #  * limitations under the License.
 
-import unittest
-
 import mock
+import pytest
+import unittest
 
 from cloudify.mocks import MockCloudifyContext
 
@@ -32,12 +32,16 @@ def ctx_mock():
 
 class TestServerUserdataHandling(unittest.TestCase):
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     @mock.patch('nova_plugin.userdata.ctx', ctx_mock())
     def test_no_userdata(self):
         server_conf = {}
         userdata.handle_userdata(server_conf)
         self.assertEqual(server_conf, {})
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_agent_installation_userdata(self):
         ctx = ctx_mock()
         ctx.agent.init_script = lambda: 'SCRIPT'
@@ -46,6 +50,8 @@ class TestServerUserdataHandling(unittest.TestCase):
             userdata.handle_userdata(server_conf)
             self.assertEqual(server_conf, {'userdata': 'SCRIPT'})
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     @mock.patch('nova_plugin.userdata.ctx', ctx_mock())
     def test_existing_userdata(self):
         server_conf = {'userdata': 'EXISTING'}
@@ -53,6 +59,8 @@ class TestServerUserdataHandling(unittest.TestCase):
         userdata.handle_userdata(server_conf)
         self.assertEqual(server_conf, server_conf_copy)
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_existing_and_agent_installation_userdata(self):
         ctx = ctx_mock()
         ctx.agent.init_script = lambda: '#! SCRIPT'

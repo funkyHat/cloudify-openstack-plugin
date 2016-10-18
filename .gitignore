@@ -61,3 +61,6 @@ docs/_build/
 
 .idea/
 
+
+# Features cache
+system_tests/generated_features/
