@@ -1,0 +1,10 @@
+prefix: {{resources_prefix}}
+external_network: {{openstack.external_network}}
+os_username: {{openstack.username}}
+os_password: {{openstack.password}}
+os_tenant_name: {{openstack.tenant}}
+os_auth_url: {{openstack.keystone_url}}
+os_region: {{openstack.region}}
+flavor: {{openstack.small_flavor_id}}
+image_id: {{openstack.centos_7_image_id}}
+key_pair_path: {{magic.workdir}}/ssh_private_key.pem

@@ -1,0 +1,28 @@
+namespace: openstack
+username:
+  description: The username to use when connecting to openstack.
+password:
+  description: The password to use when connecting to openstack.
+tenant:
+  description: The tenant name to use when connecting to openstack.
+region:
+  description: The region to use when connecting to openstack.
+keystone_url:
+  description: The URL to use to connect to the openstack keystone server, including port. This may need a /v2.0 at the end for some environments.
+large_flavor_id:
+  description: The ID of the flavour in openstack which is considered large. This should provide more than 1 CPU and more than 4GB RAM.
+small_flavor_id:
+  description: The ID of the flavour in openstack which is considered small. This should provide only 1 CPU and 2GB or less RAM.
+centos_7_image_id:
+  description: The ID of a Centos 7 image on openstack.
+ubuntu_14_04_image_id:
+  description: The ID of an Ubuntu 14.04 image on openstack.
+external_network:
+  description: The name of the external network on openstack, for floating IPs.
+  default: external
+centos_agents_user:
+  description: The username to use when connecting to agents on centos VMs via SSH.
+  default: centos
+ubuntu_agents_user:
+  description: The username to use when connecting to agents on ubuntu VMs via SSH.
+  default: ubuntu

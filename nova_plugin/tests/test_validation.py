@@ -19,6 +19,7 @@ import tempfile
 import shutil
 
 import unittest
+import pytest
 import mock
 
 from cloudify.test_utils import workflow_test
@@ -106,6 +107,8 @@ class TestValidation(unittest.TestCase):
             'is_keypair_external': is_external
         }
 
+    @pytest.mark.internal
+    @pytest.mark.workflow
     @workflow_test(blueprint_path, inputs={
         'private_key': '',
         'is_keypair_external': False
@@ -117,6 +120,8 @@ class TestValidation(unittest.TestCase):
                         new=self.new_keypair_create):
             cfy_local.execute('install', task_retries=0)
 
+    @pytest.mark.internal
+    @pytest.mark.workflow
     @workflow_test(blueprint_path, inputs='get_keypair_inputs_private_key',
                    input_func_kwargs={'is_external': True})
     @mock.patch('nova_plugin.keypair.validate_resource')
@@ -126,6 +131,8 @@ class TestValidation(unittest.TestCase):
                         new=self.new_keypair_create):
             cfy_local.execute('install', task_retries=0)
 
+    @pytest.mark.internal
+    @pytest.mark.workflow
     @workflow_test(blueprint_path, inputs='get_keypair_inputs_temp_dir',
                    input_func_kwargs={'is_external': True})
     @mock.patch('nova_plugin.keypair.validate_resource')
@@ -135,6 +142,8 @@ class TestValidation(unittest.TestCase):
                         new=self.new_keypair_create_with_exception):
             cfy_local.execute('install', task_retries=0)
 
+    @pytest.mark.internal
+    @pytest.mark.workflow
     @workflow_test(blueprint_path, inputs='get_keypair_inputs_private_key',
                    input_func_kwargs={'is_external': False})
     @mock.patch('nova_plugin.keypair.validate_resource')
@@ -144,6 +153,8 @@ class TestValidation(unittest.TestCase):
                         new=self.new_keypair_create_with_exception):
             cfy_local.execute('install', task_retries=0)
 
+    @pytest.mark.internal
+    @pytest.mark.workflow
     @workflow_test(blueprint_path, inputs='get_keypair_inputs_temp_dir',
                    input_func_kwargs={'is_external': False})
     @mock.patch('nova_plugin.keypair.validate_resource')
@@ -153,6 +164,8 @@ class TestValidation(unittest.TestCase):
                         new=self.new_keypair_create):
             cfy_local.execute('install', task_retries=0)
 
+    @pytest.mark.internal
+    @pytest.mark.workflow
     @workflow_test(blueprint_path,
                    inputs='get_keypair_inputs_not_writable_dir_r',
                    input_func_kwargs={'is_external': False})
@@ -163,6 +176,8 @@ class TestValidation(unittest.TestCase):
                         new=self.new_keypair_create_with_exception):
             cfy_local.execute('install', task_retries=0)
 
+    @pytest.mark.internal
+    @pytest.mark.workflow
     @workflow_test(blueprint_path,
                    inputs='get_keypair_inputs_not_writable_dir_rx',
                    input_func_kwargs={'is_external': False})
@@ -173,6 +188,8 @@ class TestValidation(unittest.TestCase):
                         new=self.new_keypair_create_with_exception):
             cfy_local.execute('install', task_retries=0)
 
+    @pytest.mark.internal
+    @pytest.mark.workflow
     @workflow_test(blueprint_path,
                    inputs='get_keypair_inputs_not_writable_dir_rw',
                    input_func_kwargs={'is_external': False})
@@ -183,6 +200,8 @@ class TestValidation(unittest.TestCase):
                         new=self.new_keypair_create_with_exception):
             cfy_local.execute('install', task_retries=0)
 
+    @pytest.mark.internal
+    @pytest.mark.workflow
     @workflow_test(blueprint_path,
                    inputs='get_keypair_inputs_not_readable_private_key',
                    input_func_kwargs={'is_external': True})

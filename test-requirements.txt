@@ -1,0 +1,12 @@
+pytest
+pytest-bdd
+pytest-cov
+mock
+testfixtures
+pytz
+debtcollector
+rfc3986
+monotonic
+pyparsing
+positional
+netifaces
