@@ -4,6 +4,8 @@ from clients import (
     get_nova_client,
 )
 
+from keystoneauth1.exceptions.catalog import EndpointNotFound
+
 
 def get_platform_entities(tester_conf):
     no = get_nova_client(tester_conf)
@@ -80,6 +82,17 @@ def get_platform_entities(tester_conf):
         for network in networks
     }
 
+    try:
+        tenants = ks.tenants.list()
+        tenants = {
+            tenant.name: tenant.id
+            for tenant in tenants
+        }
+    except EndpointNotFound:
+        # Used as a canary in checks of changes
+        tenants = {None: None}
+    result['tenants'] = tenants
+
     return result
 
 
@@ -97,6 +110,7 @@ def compare_state(old_state, new_state):
         )
 
     return {
+        'current': new_state,
         'created': created_entities,
         'deleted': deleted_entities,
     }
@@ -114,10 +128,11 @@ def validate_entity_type(entity_type):
         'port',
         'subnet',
         'network',
+        'tenant',
     ]
 
     assert entity_type in valid_types, \
-           '{} is not a valid type of openstack entity.'.format(entity_type)
+        '{} is not a valid type of openstack entity.'.format(entity_type)
 
 
 def supports_prefix_search(entity_type):
@@ -130,7 +145,9 @@ def supports_prefix_search(entity_type):
         'router',
         'subnet',
         'network',
+        'tenant',
+        'port',
     ]
 
     assert entity_type in supports_prefix, \
-           'Entity {} does not support prefix searches.'.format(entity_type)
+        'Entity {} does not support prefix searches.'.format(entity_type)

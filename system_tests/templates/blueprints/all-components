@@ -1,0 +1,215 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+imports:
+  - {{cloudify.types_location}}
+  - {{magic.repo_root}}/plugin.yaml
+  - http://www.getcloudify.org/spec/fabric-plugin/1.3/plugin.yaml
+
+inputs:
+  prefix:
+    description: >
+      Unique test id to be added as a prefix for resource names.
+  external_network_name:
+    type: string
+  os_username:
+    type: string
+  os_password:
+    type: string
+  os_tenant_name:
+    type: string
+  os_auth_url:
+    type: string
+  os_region:
+    type: string
+  flavor_id:
+    type: string
+  image_container_format:
+    type: string
+  image_disk_format:
+    type: string
+  image_file_path:
+    type: string
+  size:
+    type: integer
+  users:
+    type: string
+  image_username:
+    type: string
+  image_shell_command:
+    type: string
+
+node_templates:
+  external_network:
+    type: cloudify.openstack.nodes.Network
+    properties:
+      use_external_resource: true
+      resource_id: { get_input: external_network_name }
+      openstack_config: &OPENSTACK_CONFIG
+        username: { get_input: os_username }
+        password: { get_input: os_password }
+        tenant_name: { get_input: os_tenant_name }
+        auth_url: { get_input: os_auth_url }
+        region: { get_input: os_region }
+
+  router:
+    type: cloudify.openstack.nodes.Router
+    properties:
+      resource_id: { concat: [{ get_input: prefix }, '-all-components-router'] }
+      openstack_config: *OPENSTACK_CONFIG
+    relationships:
+      - target: external_network
+        type: cloudify.relationships.connected_to
+      - type: cloudify.relationships.contained_in
+        target: project
+
+  network:
+    type: cloudify.openstack.nodes.Network
+    properties:
+      resource_id: { concat: [{ get_input: prefix }, '-all-components-network'] }
+      openstack_config: *OPENSTACK_CONFIG
+    relationships:
+      - type: cloudify.relationships.contained_in
+        target: project
+
+  subnet:
+    type: cloudify.openstack.nodes.Subnet
+    properties:
+      resource_id: { concat: [{ get_input: prefix }, '-all-components-subnet'] }
+      subnet:
+        ip_version: 4
+        cidr: 10.67.79.0/24
+        dns_nameservers: [8.8.4.4, 8.8.8.8]
+      openstack_config: *OPENSTACK_CONFIG
+    relationships:
+      - target: network
+        type: cloudify.relationships.contained_in
+      - target: router
+        type: cloudify.openstack.subnet_connected_to_router
+      - type: cloudify.relationships.depends_on
+        target: project
+
+  floating_ip:
+    type: cloudify.openstack.nodes.FloatingIP
+    properties:
+      floatingip:
+        floating_network_name: { get_property: [external_network, resource_id] }
+      openstack_config: *OPENSTACK_CONFIG
+    relationships:
+      - type: cloudify.relationships.contained_in
+        target: project
+
+  security_group:
+    type: cloudify.openstack.nodes.SecurityGroup
+    properties:
+      resource_id: { concat: [{ get_input: prefix }, '-all-components-security-group'] }
+      rules:
+        - port: 22
+          remote_ip_prefix: 0.0.0.0/0
+      openstack_config: *OPENSTACK_CONFIG
+    relationships:
+      - type: cloudify.relationships.contained_in
+        target: project
+
+  keypair:
+    type: cloudify.openstack.nodes.KeyPair
+    properties:
+      resource_id: { concat: [{ get_input: prefix }, '-all-components-keypair'] }
+      private_key_path: {{magic.workdir}}/private_key.pem
+      openstack_config: *OPENSTACK_CONFIG
+    relationships:
+      - type: cloudify.relationships.contained_in
+        target: project
+
+  server:
+    type: cloudify.openstack.nodes.Server
+    properties:
+      install_agent: false
+      resource_id: { concat: [{ get_input: prefix }, '-all-components-server'] }
+      image: { concat: [{ get_input: prefix }, '-all-components-image'] }
+      flavor: { get_input: flavor_id }
+      management_network_name: { get_property: [network, resource_id] }
+      openstack_config: *OPENSTACK_CONFIG
+    relationships:
+      - target: floating_ip
+        type: cloudify.openstack.server_connected_to_floating_ip
+      - target: subnet
+        type: cloudify.relationships.depends_on
+      - target: keypair
+        type: cloudify.openstack.server_connected_to_keypair
+      - target: security_group
+        type: cloudify.openstack.server_connected_to_security_group
+      - type: cloudify.relationships.contained_in
+        target: project
+      - target: port
+        type: cloudify.openstack.server_connected_to_port
+      - target: image
+        type: cloudify.relationships.depends_on
+
+  project:
+    type: cloudify.openstack.nodes.Project
+    properties:
+      resource_id: { concat: [{ get_input: prefix }, '-all-components-project'] }
+      users: { get_input: users }
+      openstack_config: *OPENSTACK_CONFIG
+
+  port:
+    type: cloudify.openstack.nodes.Port
+    properties:
+      resource_id: { concat: [{ get_input: prefix }, '-all-components-port'] }
+      openstack_config: *OPENSTACK_CONFIG
+    relationships:
+      - target: network
+        type: cloudify.relationships.contained_in
+      - type: cloudify.relationships.depends_on
+        target: project
+      - type: cloudify.openstack.port_connected_to_security_group
+        target: security_group
+      - type: cloudify.relationships.depends_on
+        target: subnet
+
+  volume:
+    type: cloudify.openstack.nodes.Volume
+    properties:
+      resource_id: { concat: [{ get_input: prefix }, '-all-components-volume'] }
+      volume:
+        size: { get_input: size }
+      openstack_config: *OPENSTACK_CONFIG
+    relationships:
+      - type: cloudify.openstack.volume_attached_to_server
+        target: server
+
+  image:
+    type: cloudify.openstack.nodes.Image
+    properties:
+      resource_id: { concat: [{ get_input: prefix }, '-all-components-image'] }
+      image:
+        data: { get_input: image_file_path }
+        container_format: { get_input: image_container_format }
+        disk_format: { get_input: image_disk_format }
+      openstack_config: *OPENSTACK_CONFIG
+    relationships:
+      - type: cloudify.relationships.contained_in
+        target: project
+
+  test_script:
+    type: cloudify.nodes.SoftwareComponent
+    relationships:
+      - type: cloudify.relationships.contained_in
+        target: server
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        configure:
+          implementation: fabric.fabric_plugin.tasks.run_task
+          inputs:
+            tasks_file: scripts/test_disk.py
+            task_name: configure
+            fabric_env:
+              user: { get_input: image_username }
+              key_filename: {{magic.workdir}}/private_key.pem
+              host_string: { get_attribute: [ floating_ip, floating_ip_address ] }
+              device_name: { get_attribute: [ volume, device_name ] }
+              shell: { get_input: image_shell_command }
+
+outputs:
+  script_success:
+    value: { get_attribute: [test_script, test_succeeded]}

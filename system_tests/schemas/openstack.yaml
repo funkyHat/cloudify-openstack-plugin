@@ -15,14 +15,33 @@ small_flavor_id:
   description: The ID of the flavour in openstack which is considered small. This should provide only 1 CPU and 2GB or less RAM.
 centos_7_image_id:
   description: The ID of a Centos 7 image on openstack.
-ubuntu_14_04_image_id:
-  description: The ID of an Ubuntu 14.04 image on openstack.
 external_network:
   description: The name of the external network on openstack, for floating IPs.
   default: external
 centos_agents_user:
   description: The username to use when connecting to agents on centos VMs via SSH.
   default: centos
-ubuntu_agents_user:
-  description: The username to use when connecting to agents on ubuntu VMs via SSH.
-  default: ubuntu
+existing_network:
+  description: An existing network that test VMs can be deployed on.
+existing_subnet:
+  description: An existing subnet that test VMs can be deployed on.
+external_image_url:
+  description: The URL of an image that can be imported onto the platform. This is expected to be a small linux image.
+  default: https://launchpadlibrarian.net/83303699/cirros-0.3.0-i386-disk.img
+external_image_container_format:
+  description: The format of the image at external_image_url.
+  default: ovf
+external_image_disk_format:
+  description: The disk format of the image at external_image_url.
+  default: qcow2
+external_image_username:
+  description: The username to access the external image. This should have passwordless sudo access and is expected to log in to a bash shell with access to fdisk, mount, mkfs.ext4, and touch.
+  default: cirros
+external_image_shell_command:
+  description: The command used to execute fabric commands on the image from external_image_url.
+  default: "/bin/ash -l -c"
+existing_keypair:
+  description: The name of a keypair that exists on the platform. The system from which tests are being run should have the private key for this as its default.
+can_create_tenants:
+  description: Set this to false if working on a platform where you don't have permission to create tenants. This will cause some tests to be skipped or modified to accomodate this.
+  default: true

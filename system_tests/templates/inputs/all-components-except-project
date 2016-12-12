@@ -1,0 +1,16 @@
+external_network_name: {{openstack.external_network}}
+flavor_id: {{openstack.small_flavor_id}}
+image_container_format: {{openstack.external_image_container_format}}
+image_disk_format: {{openstack.external_image_disk_format}}
+image_file_path: image_file.data
+os_auth_url: {{openstack.keystone_url}}
+os_password: {{openstack.password}}
+os_region: {{openstack.region}}
+os_tenant_name: {{openstack.tenant}}
+os_username: {{openstack.username}}
+prefix: {{resources_prefix}}
+users:
+  - {{openstack.username}}
+size: 10
+image_username: {{openstack.external_image_username}}
+image_shell_command: {{openstack.external_image_shell_command}}
