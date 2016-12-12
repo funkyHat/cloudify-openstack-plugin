@@ -1,0 +1,51 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+imports:
+  - {{cloudify.types_location}}
+  - {{magic.repo_root}}/plugin.yaml
+
+inputs:
+  prefix:
+    description: >
+      Unique test id to be added as a prefix for resource names.
+  network_name:
+    type: string
+  cidr:
+    type: string
+    default: 10.67.79.0/24
+  dns_nameservers:
+    default:
+      - 8.8.8.8
+      - 8.8.4.4
+  os_username:
+    type: string
+  os_password:
+    type: string
+  os_tenant_name:
+    type: string
+  os_auth_url:
+    type: string
+  os_region:
+    type: string
+
+node_templates:
+  port:
+    type: cloudify.openstack.nodes.Port
+    properties:
+      resource_id: { concat: [{ get_input: prefix }, '-just-port'] }
+      openstack_config: &OPENSTACK_CONFIG
+        username: { get_input: os_username }
+        password: { get_input: os_password }
+        tenant_name: { get_input: os_tenant_name }
+        auth_url: { get_input: os_auth_url }
+        region: { get_input: os_region }
+    relationships:
+      - target: network
+        type: cloudify.relationships.contained_in
+
+  network:
+    type: cloudify.openstack.nodes.Network
+    properties:
+      resource_id: { get_input: network_name }
+      use_external_resource: true
+      openstack_config: *OPENSTACK_CONFIG

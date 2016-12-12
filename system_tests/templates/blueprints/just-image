@@ -1,0 +1,44 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+imports:
+  - {{cloudify.types_location}}
+  - {{magic.repo_root}}/plugin.yaml
+
+inputs:
+  prefix:
+    description: >
+      Unique test id to be added as a prefix for resource names.
+  image_file_path:
+    type: string
+  image_container_format:
+    type: string
+  image_disk_format:
+    type: string
+  image_url:
+    type: string
+  os_username:
+    type: string
+  os_password:
+    type: string
+  os_tenant_name:
+    type: string
+  os_auth_url:
+    type: string
+  os_region:
+    type: string
+
+node_templates:
+  image:
+    type: cloudify.openstack.nodes.Image
+    properties:
+      resource_id: { concat: [{ get_input: prefix }, '-just-image'] }
+      image:
+        data: { get_input: image_file_path }
+        container_format: { get_input: image_container_format }
+        disk_format: { get_input: image_disk_format }
+      openstack_config:
+        username: { get_input: os_username }
+        password: { get_input: os_password }
+        tenant_name: { get_input: os_tenant_name }
+        auth_url: { get_input: os_auth_url }
+        region: { get_input: os_region }

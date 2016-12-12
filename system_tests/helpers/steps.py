@@ -4,8 +4,11 @@ from platform_state import (
     validate_entity_type,
     supports_prefix_search,
 )
+
 from pytest_bdd import given, parsers, when, then
 import pytest
+
+import time
 
 
 @given('I know what is on the platform')
@@ -16,6 +19,15 @@ def platform_state(tester_conf):
     return get_platform_entities(tester_conf)
 
 
+def pre_check(entity, platform_changes):
+    """
+        Check whether the platform let us retrieve this entity type.
+    """
+    assert platform_changes['current'][entity + 's'] != {None: None}, (
+        "Could not retrieve entities of type {} from platform.".format(entity)
+    )
+
+
 @then(parsers.cfparse('{num:d} {entity}(s) were created on the platform'))
 def new_entity_found(num, entity, platform_changes, tester_conf):
     """
@@ -23,12 +35,14 @@ def new_entity_found(num, entity, platform_changes, tester_conf):
         platform.
         Valid entities are:
         server, volume, keypair, floating_ip, image, security_group, router,
-        port, subnet, network
+        port, subnet, network, tenant
     """
     validate_entity_type(entity)
+    pre_check(entity, platform_changes)
 
     new = get_created_entities(platform_changes)
     entities = new[entity + 's']
+
     assert len(entities) == num, (
         '{} {} expected to be created. Actual created: {}'.format(num,
                                                                   entity,
@@ -45,15 +59,17 @@ def new_entity_found_with_prefix(num, entity, platform_changes, tester_conf):
         config.
         Valid entities are:
         server, volume, keypair, floating_ip, image, security_group, router,
-        port, subnet, network
+        port, subnet, network, tenant
     """
     validate_entity_type(entity)
+    pre_check(entity, platform_changes)
     supports_prefix_search(entity)
 
     new = get_created_entities(platform_changes)
-    assert new[entity + 's'] != {}
 
     entities = new[entity + 's']
+    assert entities != {}
+
     prefix = tester_conf['resources_prefix']
     prefixed_entities = [
         new_entity for new_entity in entities
@@ -78,9 +94,11 @@ def old_entities_removed(num, entity, platform_changes, tester_conf):
         port, subnet, network
     """
     validate_entity_type(entity)
+    pre_check(entity, platform_changes)
 
     deleted = get_deleted_entities(platform_changes)
     entities = deleted[entity + 's']
+
     assert len(entities) == num, (
         '{} {} expected to be deleted. Actual deleted: {}'.format(num,
                                                                   entity,
@@ -101,10 +119,12 @@ def old_prefixed_entities_removed(num, entity, platform_changes,
         port, subnet, network
     """
     validate_entity_type(entity)
+    pre_check(entity, platform_changes)
     supports_prefix_search(entity)
 
     deleted = get_deleted_entities(platform_changes)
     entities = deleted[entity + 's']
+
     prefix = tester_conf['resources_prefix']
     prefixed_entities = [
         old_entity for old_entity in entities
@@ -133,6 +153,8 @@ def update_platform_state(platform_state, tester_conf, platform_changes):
         This must be called before any of the steps that check for created or
         deleted entities.
     """
+    # Kludge because packstack environment takes time updating volumes
+    time.sleep(2)
     new_state = get_platform_entities(tester_conf)
 
     changes = compare_state(platform_state, new_state)

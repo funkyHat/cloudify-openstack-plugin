@@ -1,0 +1,37 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+imports:
+  - {{cloudify.types_location}}
+  - {{magic.repo_root}}/plugin.yaml
+
+inputs:
+  prefix:
+    description: >
+      Unique test id to be added as a prefix for resource names.
+  rules:
+    default:
+      - port: 80
+        remote_ip_prefix: 0.0.0.0/0
+  os_username:
+    type: string
+  os_password:
+    type: string
+  os_tenant_name:
+    type: string
+  os_auth_url:
+    type: string
+  os_region:
+    type: string
+
+node_templates:
+  security_group:
+    type: cloudify.openstack.nodes.SecurityGroup
+    properties:
+      resource_id: { concat: [{ get_input: prefix }, '-just-security_group'] }
+      rules: { get_input: rules }
+      openstack_config:
+        username: { get_input: os_username }
+        password: { get_input: os_password }
+        tenant_name: { get_input: os_tenant_name }
+        auth_url: { get_input: os_auth_url }
+        region: { get_input: os_region }
