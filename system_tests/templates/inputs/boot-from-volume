@@ -1,0 +1,16 @@
+prefix: {{resources_prefix}}
+os_username: {{openstack.username}}
+os_password: {{openstack.password}}
+os_tenant_name: {{openstack.tenant}}
+os_auth_url: {{openstack.keystone_url}}
+os_region: {{openstack.region}}
+flavor_id: {{openstack.small_flavor_id}}
+image_file_path: image_file.img
+image_container_format: {{openstack.external_image_container_format}}
+image_disk_format: {{openstack.external_image_disk_format}}
+size: 8
+key_pair_prefix: {{magic.workdir}}/ssh_private_key_
+network_name: {{openstack.existing_network}}
+external_network_name: {{openstack.external_network}}
+image_username: {{openstack.external_image_username}}
+image_shell_command: {{openstack.external_image_shell_command}}
