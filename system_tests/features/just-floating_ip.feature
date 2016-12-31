@@ -1,7 +1,5 @@
 Feature: Just a floating_ip
-  @local
-  @single_node
-  @floating_ip
+  @local @single_node @floating_ip
   Scenario: Local deployment of just a floating_ip
     Given I have installed cfy
     And I have installed the plugin locally
@@ -13,9 +11,7 @@ Feature: Just a floating_ip
     Then I know what has been changed on the platform
     And 1 floating_ip(s) were created on the platform
 
-  @local
-  @single_node
-  @floating_ip
+  @local @single_node @floating_ip
   Scenario: Removing the floating_ip
     Given no tests have failed in this feature
     And I know what is on the platform

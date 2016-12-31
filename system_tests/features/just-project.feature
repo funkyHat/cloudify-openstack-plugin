@@ -1,7 +1,5 @@
 Feature: Just a project
-  @local
-  @single_node
-  @project
+  @local @single_node @project
   Scenario: Local deployment of just a project
     Given I skip this test if openstack.can_create_tenants is false
     And I have installed cfy
@@ -14,9 +12,7 @@ Feature: Just a project
     Then I know what has been changed on the platform
     And 1 tenant(s) were created on the platform with resources prefix
 
-  @local
-  @single_node
-  @project
+  @local @single_node @project
   Scenario: Removing the project
     Given I skip this test if openstack.can_create_tenants is false
     And no tests have failed in this feature

@@ -1,7 +1,5 @@
 Feature: Just a subnet
-  @local
-  @single_node
-  @subnet
+  @local @single_node @subnet
   Scenario: Local deployment of just a subnet
     Given I have installed cfy
     And I have installed the plugin locally
@@ -13,9 +11,7 @@ Feature: Just a subnet
     Then I know what has been changed on the platform
     And 1 subnet(s) were created on the platform with resources prefix
 
-  @local
-  @single_node
-  @subnet
+  @local @single_node @subnet
   Scenario: Removing the subnet
     Given no tests have failed in this feature
     And I know what is on the platform
