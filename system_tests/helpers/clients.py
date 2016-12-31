@@ -1,11 +1,12 @@
 import keystoneclient.v2_0.client as keystone_client
 from keystoneauth1 import loading, session
 import neutronclient.v2_0.client as neutron_client
-import novaclient.v2.client as nova_client
+import novaclient.client as nova_client
 
 
 def get_nova_client(tester_conf):
     return nova_client.Client(
+        '2',
         auth_url=tester_conf['openstack.keystone_url'],
         username=tester_conf['openstack.username'],
         api_key=tester_conf['openstack.password'],
