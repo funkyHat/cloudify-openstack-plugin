@@ -1,7 +1,5 @@
 Feature: Just a server
-  @local
-  @single_node
-  @server
+  @local @single_node @server
   Scenario: Local deployment of just a server
     Given I have installed cfy
     And I have installed the plugin locally
@@ -13,9 +11,7 @@ Feature: Just a server
     Then I know what has been changed on the platform
     And 1 server(s) were created on the platform with resources prefix
 
-  @local
-  @single_node
-  @server
+  @local @single_node @server
   Scenario: Removing the server
     Given no tests have failed in this feature
     And I know what is on the platform

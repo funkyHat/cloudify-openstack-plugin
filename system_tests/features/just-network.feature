@@ -1,7 +1,5 @@
 Feature: Just a network
-  @local
-  @single_node
-  @network
+  @local @single_node @network
   Scenario: Local deployment of just a network
     Given I have installed cfy
     And I have installed the plugin locally
@@ -13,9 +11,7 @@ Feature: Just a network
     Then I know what has been changed on the platform
     And 1 network(s) were created on the platform with resources prefix
 
-  @local
-  @single_node
-  @network
+  @local @single_node @network
   Scenario: Removing the network
     Given no tests have failed in this feature
     And I know what is on the platform

@@ -1,7 +1,5 @@
 Feature: All components
-  @local
-  @multi_node
-  @all_components
+  @local @multi_node @all_components @project
   Scenario: Local deployment of all components
     Given I skip this test if openstack.can_create_tenants is false
     And I have installed cfy
@@ -29,9 +27,7 @@ Feature: All components
     And 1 subnet(s) were created on the platform with resources prefix
     And 1 volume(s) were created on the platform with resources prefix
 
-  @local
-  @multi_node
-  @all_components
+  @local @multi_node @all_components @project
   Scenario: Local undeployment of all components
     Given I skip this test if openstack.can_create_tenants is false
     And no tests have failed in this feature

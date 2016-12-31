@@ -1,7 +1,5 @@
 Feature: Just a image
-  @local
-  @single_node
-  @image
+  @local @single_node @image
   Scenario: Local deployment of just a image
     Given I have installed cfy
     And I have installed the plugin locally
@@ -14,9 +12,7 @@ Feature: Just a image
     Then I know what has been changed on the platform
     And 1 image(s) were created on the platform with resources prefix
 
-  @local
-  @single_node
-  @image
+  @local @single_node @image
   Scenario: Removing the image
     Given no tests have failed in this feature
     And I know what is on the platform
