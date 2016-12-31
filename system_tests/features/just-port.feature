@@ -1,7 +1,5 @@
 Feature: Just a port
-  @local
-  @single_node
-  @port
+  @local @single_node @port
   Scenario: Local deployment of just a port
     Given I have installed cfy
     And I have installed the plugin locally
@@ -13,9 +11,7 @@ Feature: Just a port
     Then I know what has been changed on the platform
     And 1 port(s) were created on the platform
 
-  @local
-  @single_node
-  @port
+  @local @single_node @port
   Scenario: Removing the port
     Given no tests have failed in this feature
     And I know what is on the platform

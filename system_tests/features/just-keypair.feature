@@ -1,7 +1,5 @@
 Feature: Just a keypair
-  @local
-  @single_node
-  @keypair
+  @local @single_node @keypair
   Scenario: Local deployment of just a keypair
     Given I have installed cfy
     And I have installed the plugin locally
@@ -13,9 +11,7 @@ Feature: Just a keypair
     Then I know what has been changed on the platform
     And 1 keypair(s) were created on the platform with resources prefix
 
-  @local
-  @single_node
-  @keypair
+  @local @single_node @keypair
   Scenario: Removing the keypair
     Given no tests have failed in this feature
     And I know what is on the platform

@@ -1,7 +1,5 @@
 Feature: Just a router
-  @local
-  @single_node
-  @router
+  @local @single_node @router
   Scenario: Local deployment of just a router
     Given I have installed cfy
     And I have installed the plugin locally
@@ -13,9 +11,7 @@ Feature: Just a router
     Then I know what has been changed on the platform
     And 1 router(s) were created on the platform with resources prefix
 
-  @local
-  @single_node
-  @router
+  @local @single_node @router
   Scenario: Removing the router
     Given no tests have failed in this feature
     And I know what is on the platform
