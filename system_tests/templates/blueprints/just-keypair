@@ -1,0 +1,35 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+imports:
+  - {{cloudify.types_location}}
+  - {{magic.repo_root}}/plugin.yaml
+
+inputs:
+  prefix:
+    description: >
+      Unique test id to be added as a prefix for resource names.
+  os_username:
+    type: string
+  os_password:
+    type: string
+  os_tenant_name:
+    type: string
+  os_auth_url:
+    type: string
+  os_region:
+    type: string
+  key_pair_path:
+    type: string
+
+node_templates:
+  keypair:
+    type: cloudify.openstack.nodes.KeyPair
+    properties:
+      resource_id: { concat: [{ get_input: prefix }, '-just-keypair'] }
+      private_key_path: { get_input: key_pair_path }
+      openstack_config:
+        username: { get_input: os_username }
+        password: { get_input: os_password }
+        tenant_name: { get_input: os_tenant_name }
+        auth_url: { get_input: os_auth_url }
+        region: { get_input: os_region }

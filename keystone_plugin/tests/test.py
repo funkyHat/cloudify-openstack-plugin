@@ -1,4 +1,5 @@
 import mock
+import pytest
 import unittest
 
 from cloudify.context import NODE_INSTANCE
@@ -64,6 +65,8 @@ class TestProject(unittest.TestCase):
         ctx.type = NODE_INSTANCE
         return ctx
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     @mock.patch('openstack_plugin_common._put_client_in_kw',
                 autospec=True, return_value=None)
     def test_keystone_project_create(self, *_):
@@ -89,6 +92,8 @@ class TestProject(unittest.TestCase):
                          ctx.instance.runtime_properties[
                              OPENSTACK_TYPE_PROPERTY])
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     @mock.patch('openstack_plugin_common._put_client_in_kw',
                 autospec=True, return_value=None)
     def test_assign_user(self, *_):

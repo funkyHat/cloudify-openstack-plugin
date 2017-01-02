@@ -58,3 +58,6 @@ docs/_build/
 
 # QuickBuild
 .qbcache/
+
+# Features cache
+system_tests/generated_features/

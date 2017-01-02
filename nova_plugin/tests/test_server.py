@@ -16,8 +16,9 @@
 from os import path
 import tempfile
 
-import unittest
 import mock
+import pytest
+import unittest
 
 import nova_plugin
 from cloudify.test_utils import workflow_test
@@ -45,6 +46,8 @@ class TestServer(unittest.TestCase):
     blueprint_path = path.join('resources',
                                'test-start-operation-retry-blueprint.yaml')
 
+    @pytest.mark.internal
+    @pytest.mark.workflow
     @mock.patch('nova_plugin.server.create')
     @mock.patch('nova_plugin.server._set_network_and_ip_runtime_properties')
     @workflow_test(blueprint_path, copy_plugin_yaml=True)
@@ -71,6 +74,8 @@ class TestServer(unittest.TestCase):
         self.assertEqual(2, test_vars['counter'])
         self.assertEqual(0, test_vars['server'].start.call_count)
 
+    @pytest.mark.internal
+    @pytest.mark.workflow
     @workflow_test(blueprint_path, copy_plugin_yaml=True)
     @mock.patch('nova_plugin.server.create')
     @mock.patch('nova_plugin.server._set_network_and_ip_runtime_properties')
@@ -102,6 +107,8 @@ class TestServer(unittest.TestCase):
         self.assertEqual(1, test_vars['server'].start.call_count)
         self.assertEqual(3, test_vars['counter'])
 
+    @pytest.mark.internal
+    @pytest.mark.workflow
     @workflow_test(blueprint_path, copy_plugin_yaml=True)
     @mock.patch('nova_plugin.server.create')
     @mock.patch('nova_plugin.server._set_network_and_ip_runtime_properties')
@@ -129,6 +136,8 @@ class TestServer(unittest.TestCase):
         self.assertEqual(0, test_vars['server'].start.call_count)
         self.assertEqual(1, test_vars['counter'])
 
+    @pytest.mark.internal
+    @pytest.mark.workflow
     @workflow_test(blueprint_path, copy_plugin_yaml=True)
     @mock.patch('nova_plugin.server.start')
     @mock.patch('nova_plugin.server._handle_image_or_flavor')
@@ -145,6 +154,8 @@ class TestServer(unittest.TestCase):
                          {'group': 'affinity-group-id'},
                          'expecting \'scheduler_hints\' value to exist')
 
+    @pytest.mark.internal
+    @pytest.mark.workflow
     @workflow_test(blueprint_path, copy_plugin_yaml=True,
                    inputs={'use_password': True})
     @mock.patch('nova_plugin.server.create')
@@ -187,6 +198,8 @@ class TestServer(unittest.TestCase):
 
 
 class TestMergeNICs(unittest.TestCase):
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_merge_prepends_management_network(self):
         """When the mgmt network isnt in a relationship, its the 1st nic."""
         mgmt_network_id = 'management network'
@@ -197,6 +210,8 @@ class TestMergeNICs(unittest.TestCase):
         self.assertEqual(len(merged), 2)
         self.assertEqual(merged[0]['net-id'], 'management network')
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_management_network_in_relationships(self):
         """When the mgmt network was in a relationship, it's not prepended."""
         mgmt_network_id = 'management network'
@@ -208,6 +223,8 @@ class TestMergeNICs(unittest.TestCase):
 
 
 class TestNormalizeNICs(unittest.TestCase):
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_normalize_port_priority(self):
         """Whe there's both net-id and port-id, port-id is used."""
         nics = [{'net-id': '1'}, {'port-id': '2'}, {'net-id': 3, 'port-id': 4}]
@@ -296,6 +313,8 @@ class TestServerNICs(NICTestBase):
     with relationships to networks. Then, examine the NICs list produced from
     the relationships.
     """
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_nova_server_creation_nics_ordering(self):
         """NIC list keeps the order of the relationships.
 
@@ -322,6 +341,8 @@ class TestServerNICs(NICTestBase):
             ['1', '2', '3', '4', '5', '6'],
             [n['net-id'] for n in server['nics']])
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_server_creation_prepends_mgmt_network(self):
         """If the management network isn't in a relation, it's the first NIC.
 
@@ -348,6 +369,8 @@ class TestServerNICs(NICTestBase):
         self.assertEqual('other', first_nic['net-id'])
         self.assertEqual(7, len(server['nics']))
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_server_creation_uses_relation_mgmt_nic(self):
         """If the management network is in a relation, it isn't prepended.
 
@@ -380,6 +403,8 @@ class TestServerPortNICs(NICTestBase):
     connection uses the port that was provided.
     """
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_network_with_port(self):
         """Port on the management network is used to connect to it.
 
@@ -395,6 +420,8 @@ class TestServerPortNICs(NICTestBase):
 
         self.assertEqual([{'port-id': '1'}], server['nics'])
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_port_not_to_mgmt_network(self):
         """A NICs list entry is added with the network and the port.
 
@@ -416,6 +443,8 @@ class TestServerPortNICs(NICTestBase):
 
 class TestBootFromVolume(unittest.TestCase):
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     @mock.patch('nova_plugin.server._get_boot_volume_relationships',
                 autospec=True, return_value=['test-id'])
     def test_handle_boot_volume(self, *_):
@@ -425,6 +454,8 @@ class TestBootFromVolume(unittest.TestCase):
         self.assertEqual({'vda': 'test-id:::0'},
                          server['block_device_mapping'])
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     @mock.patch('nova_plugin.server._get_boot_volume_relationships',
                 autospec=True, return_value=[])
     def test_handle_boot_volume_no_boot_volume(self, *_):
@@ -436,6 +467,8 @@ class TestBootFromVolume(unittest.TestCase):
 
 class TestImageFromRelationships(unittest.TestCase):
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     @mock.patch('glance_plugin.image.'
                 'get_openstack_ids_of_connected_nodes_by_openstack_type',
                 autospec=True, return_value=['test-id'])
@@ -445,6 +478,8 @@ class TestImageFromRelationships(unittest.TestCase):
         nova_plugin.server.handle_image_from_relationship(server, 'image', ctx)
         self.assertEqual({'image': 'test-id'}, server)
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     @mock.patch('glance_plugin.image.'
                 'get_openstack_ids_of_connected_nodes_by_openstack_type',
                 autospec=True, return_value=[])
@@ -470,6 +505,8 @@ class TestServerRelationships(unittest.TestCase):
         ctx.logger = setup_logger('mock-logger')
         return ctx
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_boot_volume_relationship(self):
         instance_id = 'test-id'
         ctx = self._get_ctx_mock(instance_id, True)
@@ -477,6 +514,8 @@ class TestServerRelationships(unittest.TestCase):
             VOLUME_OPENSTACK_TYPE, ctx)
         self.assertEqual([instance_id], result)
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_no_boot_volume_relationship(self):
         instance_id = 'test-id'
         ctx = self._get_ctx_mock(instance_id, False)

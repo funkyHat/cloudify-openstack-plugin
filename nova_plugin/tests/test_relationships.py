@@ -23,6 +23,7 @@ get_single_connected_node_by_openstack_type
 """
 
 import uuid
+import pytest
 from unittest import TestCase
 
 from neutron_plugin.network import NETWORK_OPENSTACK_TYPE
@@ -93,6 +94,8 @@ class RelationshipsTestBase(TestCase):
 
 class TestGettingRelatedResources(RelationshipsTestBase):
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_get_relationships_finds_all_by_type(self):
         """get_relationships_by_openstack_type returns all rels that match."""
         rel_specs = [{
@@ -117,6 +120,8 @@ class TestGettingRelatedResources(RelationshipsTestBase):
                                                        NETWORK_OPENSTACK_TYPE)
         self.assertEqual(3, len(filtered))
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_get_ids_of_nodes_by_type(self):
 
         rel_spec = {
@@ -149,12 +154,16 @@ class TestGetSingleByID(RelationshipsTestBase):
         } for node_id in ids]
         return self._make_vm_ctx_with_relationships(rel_specs)
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_get_single_id(self):
         ctx = self._make_instances(['the node id'])
         found_id = get_openstack_id_of_single_connected_node_by_openstack_type(
             ctx, NETWORK_OPENSTACK_TYPE)
         self.assertEqual('the node id', found_id)
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_get_single_id_two_found(self):
         ctx = self._make_instances([0, 1])
         self.assertRaises(
@@ -162,6 +171,8 @@ class TestGetSingleByID(RelationshipsTestBase):
             get_openstack_id_of_single_connected_node_by_openstack_type, ctx,
             NETWORK_OPENSTACK_TYPE)
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_get_single_id_two_found_if_exists_true(self):
         ctx = self._make_instances([0, 1])
 
@@ -173,12 +184,16 @@ class TestGetSingleByID(RelationshipsTestBase):
         else:
             self.fail()
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_get_single_id_if_exists_none_found(self):
         ctx = self._make_instances([])
         found = get_openstack_id_of_single_connected_node_by_openstack_type(
             ctx, NETWORK_OPENSTACK_TYPE, if_exists=True)
         self.assertIsNone(found)
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_get_single_id_none_found(self):
         rel_spec = []
         ctx = self._make_vm_ctx_with_relationships(rel_spec)
@@ -188,12 +203,16 @@ class TestGetSingleByID(RelationshipsTestBase):
             ctx,
             NETWORK_OPENSTACK_TYPE)
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_get_single_node(self):
         ctx = self._make_instances(['the node id'])
         found_node = get_single_connected_node_by_openstack_type(
             ctx, NETWORK_OPENSTACK_TYPE)
         self.assertEqual('the node id', found_node.id)
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_get_single_node_two_found(self):
         ctx = self._make_instances([0, 1])
         self.assertRaises(
@@ -201,6 +220,8 @@ class TestGetSingleByID(RelationshipsTestBase):
             get_single_connected_node_by_openstack_type,
             ctx, NETWORK_OPENSTACK_TYPE)
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_get_single_node_two_found_if_exists(self):
         ctx = self._make_instances([0, 1])
 
@@ -211,6 +232,8 @@ class TestGetSingleByID(RelationshipsTestBase):
             NETWORK_OPENSTACK_TYPE,
             if_exists=True)
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_get_single_node_if_exists_none_found(self):
         ctx = self._make_instances([])
 
@@ -218,6 +241,8 @@ class TestGetSingleByID(RelationshipsTestBase):
             ctx, NETWORK_OPENSTACK_TYPE, if_exists=True)
         self.assertIsNone(found)
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_get_single_node_none_found(self):
         ctx = self._make_instances([])
 

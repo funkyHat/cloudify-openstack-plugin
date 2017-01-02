@@ -14,6 +14,7 @@
 #  * limitations under the License.
 
 import mock
+import pytest
 import unittest
 
 from cloudify import mocks as cfy_mocks
@@ -36,6 +37,8 @@ class TestCinderVolume(unittest.TestCase):
     def tearDown(self):
         current_ctx.clear()
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_create_new(self):
         volume_name = 'fake volume name'
         volume_description = 'fake volume'
@@ -80,6 +83,8 @@ class TestCinderVolume(unittest.TestCase):
             volume.VOLUME_OPENSTACK_TYPE,
             ctx_m.instance.runtime_properties[OPENSTACK_TYPE_PROPERTY])
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_create_use_existing(self):
         volume_id = '00000000-0000-0000-0000-000000000000'
 
@@ -110,6 +115,8 @@ class TestCinderVolume(unittest.TestCase):
             volume.VOLUME_OPENSTACK_TYPE,
             ctx_m.instance.runtime_properties[OPENSTACK_TYPE_PROPERTY])
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_delete(self):
         volume_id = '00000000-0000-0000-0000-000000000000'
         volume_name = 'test-volume'
@@ -139,6 +146,8 @@ class TestCinderVolume(unittest.TestCase):
         self.assertTrue(OPENSTACK_NAME_PROPERTY
                         not in ctx_m.instance.runtime_properties)
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     @mock.patch('openstack_plugin_common.NovaClientWithSugar')
     @mock.patch('openstack_plugin_common.CinderClientWithSugar')
     @mock.patch.object(volume, 'wait_until_status', return_value=(None, True))
@@ -248,12 +257,16 @@ class TestCinderVolume(unittest.TestCase):
                 volume_id=volume_id,
                 status=volume.VOLUME_STATUS_AVAILABLE)
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_cleanup_after_waituntilstatus_throws_recoverable_error(self):
         err = cfy_exc.RecoverableError('Some recoverable error')
         with mock.patch.object(volume, 'wait_until_status',
                                side_effect=[err, (None, True)]) as wait_mock:
             self._test_cleanup__after_attach_fails(type(err), True, wait_mock)
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_cleanup_after_waituntilstatus_throws_any_not_nonrecov_error(self):
         class ArbitraryNonRecoverableException(Exception):
             pass
@@ -262,17 +275,23 @@ class TestCinderVolume(unittest.TestCase):
                                side_effect=[err, (None, True)]) as wait_mock:
             self._test_cleanup__after_attach_fails(type(err), True, wait_mock)
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_cleanup_after_waituntilstatus_lets_nonrecov_errors_pass(self):
         err = cfy_exc.NonRecoverableError('Some non recoverable error')
         with mock.patch.object(volume, 'wait_until_status',
                                side_effect=[err, (None, True)]) as wait_mock:
             self._test_cleanup__after_attach_fails(type(err), False, wait_mock)
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     @mock.patch.object(volume, 'wait_until_status', return_value=(None, False))
     def test_cleanup_after_waituntilstatus_times_out(self, wait_mock):
         self._test_cleanup__after_attach_fails(cfy_exc.RecoverableError, True,
                                                wait_mock)
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     @mock.patch('openstack_plugin_common.NovaClientWithSugar')
     @mock.patch('openstack_plugin_common.CinderClientWithSugar')
     @mock.patch.object(volume, 'wait_until_status', return_value=(None, True))

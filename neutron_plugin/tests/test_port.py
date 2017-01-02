@@ -13,9 +13,9 @@
 #    * See the License for the specific language governing permissions and
 #    * limitations under the License.
 
-import unittest
-
 import mock
+import unittest
+import pytest
 
 import neutron_plugin.port
 from cloudify.mocks import (MockCloudifyContext,
@@ -28,6 +28,8 @@ from cloudify.exceptions import OperationRetry
 
 class TestPort(unittest.TestCase):
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_fixed_ips_no_fixed_ips(self):
         node_props = {'fixed_ip': ''}
 
@@ -44,6 +46,8 @@ class TestPort(unittest.TestCase):
 
         self.assertNotIn('fixed_ips', port)
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_fixed_ips_subnet_only(self):
         node_props = {'fixed_ip': ''}
 
@@ -61,6 +65,8 @@ class TestPort(unittest.TestCase):
         self.assertEquals([{'subnet_id': 'some-subnet-id'}],
                           port.get('fixed_ips'))
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_fixed_ips_ip_address_only(self):
         node_props = {'fixed_ip': '1.2.3.4'}
 
@@ -78,6 +84,8 @@ class TestPort(unittest.TestCase):
         self.assertEquals([{'ip_address': '1.2.3.4'}],
                           port.get('fixed_ips'))
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_fixed_ips_subnet_and_ip_address(self):
         node_props = {'fixed_ip': '1.2.3.4'}
 
@@ -125,6 +133,8 @@ class MockNeutronClient(NeutronClientWithSugar):
 
 
 class TestPortSG(unittest.TestCase):
+    @pytest.mark.internal
+    @pytest.mark.unit
     @mock.patch('openstack_plugin_common._put_client_in_kw')
     def test_connect_sg_to_port(self, *_):
         mock_neutron = MockNeutronClient(update=True)
@@ -138,6 +148,8 @@ class TestPortSG(unittest.TestCase):
             neutron_plugin.port.connect_security_group(mock_neutron)
             self.assertIsNone(ctx.operation._operation_retry)
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     @mock.patch('openstack_plugin_common._put_client_in_kw')
     def test_connect_sg_to_port_race_condition(self, *_):
         mock_neutron = MockNeutronClient(update=False)

@@ -14,9 +14,10 @@
 #  * limitations under the License.
 
 
+import mock
+import pytest
 import unittest
 
-import mock
 from novaclient import exceptions as nova_exceptions
 
 import nova_plugin.server as server
@@ -26,6 +27,8 @@ from cloudify.mocks import MockCloudifyContext
 
 class TestServerImageAndFlavor(unittest.TestCase):
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_no_image_and_no_flavor(self):
         node_props = {
             'image': '',
@@ -43,6 +46,8 @@ class TestServerImageAndFlavor(unittest.TestCase):
                               server._handle_image_or_flavor,
                               serv, nova_client, 'flavor')
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_image_and_flavor_properties_as_names(self):
         node_props = {
             'image': 'some-image-name',
@@ -59,6 +64,8 @@ class TestServerImageAndFlavor(unittest.TestCase):
         self.assertEquals('some-image-id', serv.get('image'))
         self.assertEquals('some-flavor-id', serv.get('flavor'))
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_image_and_flavor_properties_as_ids(self):
         node_props = {
             'image': 'some-image-id',
@@ -75,6 +82,8 @@ class TestServerImageAndFlavor(unittest.TestCase):
         self.assertEquals('some-image-id', serv.get('image'))
         self.assertEquals('some-flavor-id', serv.get('flavor'))
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_image_id_and_flavor_id(self):
         node_props = {
             'image': '',
@@ -93,6 +102,8 @@ class TestServerImageAndFlavor(unittest.TestCase):
         self.assertEquals('some-image-id', serv.get('image'))
         self.assertEquals('some-flavor-id', serv.get('flavor'))
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_image_name_and_flavor_name(self):
         node_props = {
             'image': '',
@@ -113,6 +124,8 @@ class TestServerImageAndFlavor(unittest.TestCase):
         self.assertEquals('some-flavor-id', serv.get('flavor'))
         self.assertNotIn('flavor_name', serv)
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_unknown_image_name_and_flavor_name(self):
         node_props = {
             'image': '',
@@ -133,6 +146,8 @@ class TestServerImageAndFlavor(unittest.TestCase):
                               server._handle_image_or_flavor,
                               serv, nova_client, 'flavor')
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_image_id_and_flavor_id_override_on_properties(self):
         node_props = {
             'image': 'properties-image-id',
@@ -151,6 +166,8 @@ class TestServerImageAndFlavor(unittest.TestCase):
         self.assertEquals('some-image-id', serv.get('image'))
         self.assertEquals('some-flavor-id', serv.get('flavor'))
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_image_name_and_flavor_name_override_on_properties(self):
         node_props = {
             'image': 'properties-image-id',
@@ -171,6 +188,8 @@ class TestServerImageAndFlavor(unittest.TestCase):
         self.assertEquals('some-flavor-id', serv.get('flavor'))
         self.assertNotIn('flavor_name', serv)
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_image_name_and_flavor_name_override_on_image_and_flavor_ids(self):
         node_props = {
             'image': '',

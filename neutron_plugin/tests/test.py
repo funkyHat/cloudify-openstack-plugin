@@ -16,6 +16,7 @@
 import mock
 import random
 import string
+import pytest
 import unittest
 
 from cloudify.exceptions import NonRecoverableError
@@ -79,20 +80,30 @@ class ResourcesRenamingTest(unittest.TestCase):
         arg = calls[0][1][0]
         self.assertEquals(arg[obj_type]['name'], 'p2_' + obj_type + '_name')
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_network(self):
         self._test('network')
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_port(self):
         self._test('port')
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_router(self):
         self._test('router')
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_security_group(self):
         self._test('security_group')
 
     # Network chosen arbitrary for this test.
     # Just testing something without prefix.
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_network_no_prefix(self):
         ctx = self._setup_ctx('network')
         for pctx in common_test.BOOTSTRAP_CONTEXTS_WITHOUT_PREFIX:
@@ -146,6 +157,8 @@ class SecurityGroupTest(unittest.TestCase):
         })
         return ctx
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_sg_new(self):
         ctx = self._setup_ctx()
         self.neutron_mock.cosmo_list = mock.Mock()
@@ -160,6 +173,8 @@ class SecurityGroupTest(unittest.TestCase):
         neutron_plugin.security_group.create(ctx)
         self.assertTrue(self.neutron_mock.create_security_group.mock_calls)
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_sg_use_existing(self):
         ctx = self._setup_ctx()
         self.neutron_mock.cosmo_list = mock.Mock()
@@ -186,6 +201,8 @@ class SecurityGroupTest(unittest.TestCase):
         neutron_plugin.security_group.create(ctx)
         self.assertFalse(self.neutron_mock.create_security_group.mock_calls)
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_sg_use_existing_with_other_rules(self):
         ctx = self._setup_ctx()
         self.neutron_mock.cosmo_list = mock.Mock()
@@ -214,6 +231,7 @@ class SecurityGroupTest(unittest.TestCase):
             neutron_plugin.security_group.create,
             ctx
         )
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -13,10 +13,11 @@
 #    * See the License for the specific language governing permissions and
 #    * limitations under the License.
 
-import os
-import unittest
-import tempfile
 import json
+import os
+import tempfile
+import unittest
+import pytest
 
 import mock
 from cloudify.exceptions import NonRecoverableError
@@ -224,6 +225,17 @@ class OpenstackClientTests(unittest.TestCase):
                     'k3': 'u3'
                 }
             }
+
+    @pytest.mark.internal
+    @pytest.mark.unit
+    def test_clients_custom_configuration(self):
+        # tests for clients custom configuration, passed via properties/inputs
+
+        envars_cfg = {
+            'OS_USERNAME': 'envar-username',
+            'OS_PASSWORD': 'envar-password',
+            'OS_TENANT_NAME': 'envar-tenant-name',
+            'OS_AUTH_URL': 'envar-auth-url'
         }
         result = {
             'k1': 'v1',
@@ -628,12 +640,18 @@ class ResourceQuotaTests(unittest.TestCase):
                 ctx=ctx, sugared_client=client,
                 openstack_type='openstack_type')
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_equals_quotas(self):
         self._test_quota_validation(3, 3, True)
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_exceeded_quota(self):
         self._test_quota_validation(5, 3, True)
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_infinite_quota(self):
         self._test_quota_validation(5, -1, False)
 
@@ -668,18 +686,24 @@ class UseExternalResourceTests(unittest.TestCase):
             return common.use_external_resource(node_context,
                                                 client_mock, os_type)
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_use_existing_resource(self):
         self.assertIsNotNone(self._test_use_external_resource(True, True,
                                                               True))
         self.assertIsNotNone(self._test_use_external_resource(True, False,
                                                               True))
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_create_resource(self):
         self.assertIsNone(self._test_use_external_resource(False, True, False))
         self.assertIsNone(self._test_use_external_resource(False, False,
                                                            False))
         self.assertIsNone(self._test_use_external_resource(True, True, False))
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_raise_error(self):
         # If exists and shouldn't it is checked in resource
         # validation so below scenario is not tested here
@@ -719,10 +743,14 @@ class ValidateResourceTests(unittest.TestCase):
                 new=return_value):
             return common.validate_resource(node_context, client_mock, os_type)
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_use_existing_resource(self):
         self._test_validate_resource(True, True, True)
         self._test_validate_resource(True, False, True)
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_create_resource(self):
         client_mock = mock.MagicMock()
         client_mock.cosmo_list.return_value = ['a', 'b', 'c']
@@ -731,6 +759,8 @@ class ValidateResourceTests(unittest.TestCase):
         self._test_validate_resource(False, False, False, client_mock)
         self._test_validate_resource(True, True, False, client_mock)
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_raise_error(self):
         # If exists and shouldn't it is checked in resource
         # validation so below scenario is not tested here
@@ -740,6 +770,8 @@ class ValidateResourceTests(unittest.TestCase):
                           create_if_missing=False,
                           exists=False)
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_raise_quota_error(self):
         client_mock = mock.MagicMock()
         client_mock.cosmo_list.return_value = ['a', 'b', 'c']

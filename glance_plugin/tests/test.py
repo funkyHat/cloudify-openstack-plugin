@@ -16,6 +16,7 @@
 import mock
 import os
 import tempfile
+import pytest
 import unittest
 
 import glance_plugin
@@ -34,6 +35,8 @@ def ctx_mock(image_dict):
 
 class TestCheckImage(unittest.TestCase):
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     @mock.patch('glance_plugin.image.ctx',
                 ctx_mock({'image': {}}))
     def test_check_image_no_file_no_url(self):
@@ -41,6 +44,8 @@ class TestCheckImage(unittest.TestCase):
         self.assertRaises(NonRecoverableError,
                           image._validate_image)
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     @mock.patch('glance_plugin.image.ctx',
                 ctx_mock({'image_url': 'test-url', 'image': {'data': '.'}}))
     def test_check_image_and_url(self):
@@ -48,6 +53,8 @@ class TestCheckImage(unittest.TestCase):
         self.assertRaises(NonRecoverableError,
                           image._validate_image)
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     @mock.patch('glance_plugin.image.ctx',
                 ctx_mock({'image_url': 'test-url', 'image': {}}))
     def test_check_image_url(self):
@@ -57,6 +64,8 @@ class TestCheckImage(unittest.TestCase):
         with mock.patch('httplib.HTTPConnection', http_connection_mock):
             glance_plugin.image._validate_image()
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     def test_check_image_file(self):
         # test if it passes file & no url
         image_file_path = tempfile.mkstemp()[1]
@@ -64,6 +73,8 @@ class TestCheckImage(unittest.TestCase):
                         ctx_mock({'image': {'data': image_file_path}})):
             glance_plugin.image._validate_image()
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     @mock.patch('glance_plugin.image.ctx',
                 ctx_mock({'image': {'data': '/test/path'}}))
     # test when open file throws IO error
@@ -74,6 +85,8 @@ class TestCheckImage(unittest.TestCase):
             self.assertRaises(NonRecoverableError,
                               glance_plugin.image._validate_image)
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     @mock.patch('glance_plugin.image.ctx',
                 ctx_mock({'image_url': '?', 'image': {}}))
     # test when bad url
@@ -87,6 +100,8 @@ class TestCheckImage(unittest.TestCase):
 
 class TestValidateProperties(unittest.TestCase):
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     @mock.patch('glance_plugin.image.ctx',
                 ctx_mock({'image': {'container_format': 'bare'}}))
     def test_check_image_container_format_no_disk_format(self):
@@ -94,6 +109,8 @@ class TestValidateProperties(unittest.TestCase):
         self.assertRaises(NonRecoverableError,
                           image._validate_image_dictionary)
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     @mock.patch('glance_plugin.image.ctx',
                 ctx_mock({'image': {'disk_format': 'qcow2'}}))
     def test_check_image_no_container_format_disk_format(self):
@@ -101,6 +118,8 @@ class TestValidateProperties(unittest.TestCase):
         self.assertRaises(NonRecoverableError,
                           image._validate_image_dictionary)
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     @mock.patch('glance_plugin.image.ctx',
                 ctx_mock({'image': {}}))
     def test_check_image_no_container_format_no_disk_format(self):
@@ -108,6 +127,8 @@ class TestValidateProperties(unittest.TestCase):
         self.assertRaises(NonRecoverableError,
                           image._validate_image_dictionary)
 
+    @pytest.mark.internal
+    @pytest.mark.unit
     @mock.patch('glance_plugin.image.ctx',
                 ctx_mock(
                     {'image':
@@ -122,6 +143,8 @@ class TestStartImage(unittest.TestCase):
     blueprint_path = os.path.join('resources',
                                   'test-image-start.yaml')
 
+    @pytest.mark.internal
+    @pytest.mark.workflow
     @mock.patch('glance_plugin.image.create')
     @workflow_test(blueprint_path, copy_plugin_yaml=True)
     def test_image_lifecycle_start(self, cfy_local, *_):

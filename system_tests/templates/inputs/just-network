@@ -1,0 +1,6 @@
+prefix: {{resources_prefix}}
+os_username: {{openstack.username}}
+os_password: {{openstack.password}}
+os_tenant_name: {{openstack.tenant}}
+os_auth_url: {{openstack.keystone_url}}
+os_region: {{openstack.region}}

@@ -253,7 +253,14 @@ def create(nova_client, neutron_client, args, **kwargs):
     ctx.logger.debug(
         "server.create() server before transformations: {0}".format(server))
 
-    _handle_image_or_flavor(server, nova_client, 'image')
+    if 'block_device_mapping' in server:
+        # if there is a connected boot volume, don't require the `image`
+        # property.
+        # However, python-novaclient requires an `image` input anyway, and
+        # checks it for truthiness when deciding to pass it along to the API
+        server['image'] = ctx.node.properties.get('image')
+    else:
+        _handle_image_or_flavor(server, nova_client, 'image')
     _handle_image_or_flavor(server, nova_client, 'flavor')
 
     if provider_context.agents_security_group:
@@ -287,7 +294,7 @@ def create(nova_client, neutron_client, args, **kwargs):
 
     _fail_on_missing_required_parameters(
         server,
-        ('name', 'flavor', 'image', 'key_name'),
+        ('name', 'flavor', 'key_name'),
         'server')
 
     _prepare_server_nics(neutron_client, ctx, server)
@@ -796,7 +803,6 @@ def creation_validation(nova_client, args, **kwargs):
     validate_resource(ctx, nova_client, SERVER_OPENSTACK_TYPE)
 
     server_props = dict(ctx.node.properties['server'], **args)
-    validate_server_property_value_exists(server_props, 'image')
     validate_server_property_value_exists(server_props, 'flavor')
 
 
