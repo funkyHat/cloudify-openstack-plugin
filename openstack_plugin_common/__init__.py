@@ -433,11 +433,17 @@ class OpenStackClient(object):
     def __init__(self, client_name, client_class, config=None, *args, **kw):
         cfg = Config.get()
         if config:
+            config['region_name'] = config.pop('region')
             Config.update_config(cfg, config)
         cfg = self._merge_custom_configuration(cfg, client_name)
 
         auth_params, client_params = OpenStackClient._split_config(cfg)
         OpenStackClient._validate_auth_params(auth_params)
+
+        if '/v3' in auth_params['auth_url']:
+            # keystone v3 complains if these aren't set.
+            for key in 'user_domain_name', 'project_domain_name':
+                auth_params.setdefault(key, 'default')
 
         client_params['session'] = self._authenticate(auth_params)
         self._client = client_class(**client_params)
@@ -693,6 +699,10 @@ def _re_raise(e, recoverable, retry_after=None, status_code=None):
 class NovaClientWithSugar(OpenStackClient):
 
     def __init__(self, *args, **kw):
+        config = kw['config']
+        if config.get('nova_url'):
+            config['bypass_url'] = config.pop('nova_url')
+
         super(NovaClientWithSugar, self).__init__(
             'nova_client', partial(nova_client.Client, '2'), *args, **kw)
 
