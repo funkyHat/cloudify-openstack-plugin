@@ -5,4 +5,5 @@ os_tenant_name: {{openstack.tenant}}
 os_auth_url: {{openstack.keystone_url}}
 os_region: {{openstack.region}}
 users:
-  - {{openstack.username}}
+  - name: {{openstack.username}}
+    roles: [admin]

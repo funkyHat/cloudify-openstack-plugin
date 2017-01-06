@@ -1,16 +1,21 @@
 from clients import (
+    get_cinder_client,
     get_keystone_client,
     get_neutron_client,
     get_nova_client,
 )
 
 from keystoneauth1.exceptions.catalog import EndpointNotFound
+from keystoneauth1.exceptions.http import Forbidden
 
 
 def get_platform_entities(tester_conf):
+    ci = get_cinder_client(tester_conf)
     no = get_nova_client(tester_conf)
     ne = get_neutron_client(tester_conf)
     ks = get_keystone_client(tester_conf)
+
+    ks_version = 3 if 'v3' in tester_conf['openstack.keystone_url'] else 2
 
     result = {}
 
@@ -19,9 +24,9 @@ def get_platform_entities(tester_conf):
         server.name: server.id
         for server in servers
     }
-    volumes = no.volumes.list()
+    volumes = ci.volumes.list()
     result['volumes'] = {
-        volume.display_name: volume.id
+        volume.name: volume.id
         for volume in volumes
     }
     keypairs = no.keypairs.list()
@@ -83,12 +88,13 @@ def get_platform_entities(tester_conf):
     }
 
     try:
-        tenants = ks.tenants.list()
+        tenants = getattr(
+            ks, 'projects' if ks_version == 3 else 'tenants').list()
         tenants = {
             tenant.name: tenant.id
             for tenant in tenants
         }
-    except EndpointNotFound:
+    except (EndpointNotFound, Forbidden):
         # Used as a canary in checks of changes
         tenants = {None: None}
     result['tenants'] = tenants
