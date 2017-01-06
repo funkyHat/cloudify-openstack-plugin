@@ -35,7 +35,7 @@ setup(
     install_requires=[
         'cloudify-plugins-common>=3.3.1',
         'keystoneauth1==2.12.1',
-        'python-novaclient==6.0.0',
+        'python-novaclient==7.0.0',
         'python-keystoneclient==3.5.0',
         'python-neutronclient==6.0.0',
         'python-cinderclient==1.9.0',
