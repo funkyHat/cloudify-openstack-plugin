@@ -73,7 +73,7 @@ class TestCinderVolume(unittest.TestCase):
 
         cinder_client_m.volumes.create.assert_called_once_with(
             size=volume_size,
-            display_name=volume_name,
+            name=volume_name,
             description=volume_description)
         cinder_client_m.volumes.get.assert_called_once_with(volume_id)
         self.assertEqual(

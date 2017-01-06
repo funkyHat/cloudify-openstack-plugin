@@ -440,6 +440,7 @@ class CustomConfigFromInputs(ClientsConfigTest):
 
     def get_inputs_cfg(self):
         return {
+            'auth_url': 'envar-auth-url',
             'username': 'inputs-username',
             'custom_configuration': {
                 'neutron_client': {
@@ -518,6 +519,7 @@ class CustomConfigFromFile(ClientsConfigTest):
 
     def get_inputs_cfg(self):
         return {
+            'auth_url': 'envar-auth-url',
             'username': 'inputs-username',
         }
 
