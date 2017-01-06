@@ -432,15 +432,19 @@ class OpenStackClient(object):
 
     def __init__(self, client_name, client_class, config=None, *args, **kw):
         cfg = Config.get()
+        v3 = '/v3' in config['auth_url']
+
         if config:
-            config['region_name'] = config.pop('region')
+            region = config.pop('region', None)
+            if v3 and region:
+                config['region_name'] = region
             Config.update_config(cfg, config)
         cfg = self._merge_custom_configuration(cfg, client_name)
 
         auth_params, client_params = OpenStackClient._split_config(cfg)
         OpenStackClient._validate_auth_params(auth_params)
 
-        if '/v3' in auth_params['auth_url']:
+        if v3:
             # keystone v3 complains if these aren't set.
             for key in 'user_domain_name', 'project_domain_name':
                 auth_params.setdefault(key, 'default')
