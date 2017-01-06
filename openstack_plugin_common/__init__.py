@@ -22,7 +22,7 @@ from IPy import IP
 from keystoneauth1 import loading, session
 import cinderclient.client as cinder_client
 import cinderclient.exceptions as cinder_exceptions
-import keystoneclient.client as keystone_client
+import keystoneclient.v3.client as keystone_client
 import keystoneclient.exceptions as keystone_exceptions
 import neutronclient.v2_0.client as neutron_client
 import neutronclient.common.exceptions as neutron_exceptions
