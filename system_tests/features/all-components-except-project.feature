@@ -18,7 +18,7 @@ Feature: All components except project
     And 1 image(s) were created on the platform with resources prefix
     And 1 keypair(s) were created on the platform with resources prefix
     And 1 network(s) were created on the platform with resources prefix
-    And 3 port(s) were created on the platform
+    And 5 port(s) were created on the platform
     And 1 router(s) were created on the platform with resources prefix
     And 1 security_group(s) were created on the platform with resources prefix
     And 1 server(s) were created on the platform with resources prefix
@@ -38,7 +38,7 @@ Feature: All components except project
     And 1 image(s) with resources prefix were deleted from the platform
     And 1 keypair(s) with resources prefix were deleted from the platform
     And 1 network(s) with resources prefix were deleted from the platform
-    And 3 port(s) were deleted from the platform
+    And 5 port(s) were deleted from the platform
     And 1 router(s) with resources prefix were deleted from the platform
     And 1 security_group(s) with resources prefix were deleted from the platform
     And 1 server(s) with resources prefix were deleted from the platform
