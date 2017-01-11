@@ -125,12 +125,6 @@ node_templates:
         target: volume
       - type: cloudify.openstack.server_connected_to_security_group
         target: security_group
-    interfaces:
-      cloudify.interfaces.lifecycle:
-        create:
-          inputs:
-            args:
-              availability_zone: nova
 
   test_script:
     type: cloudify.nodes.SoftwareComponent
